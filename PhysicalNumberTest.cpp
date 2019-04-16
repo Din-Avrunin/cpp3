@@ -29,6 +29,7 @@ int main() {
     PhysicalNumber g(15, Unit::G);
     PhysicalNumber h(20, Unit::KG);
     PhysicalNumber i(10, Unit::TON);
+
     testcase
     .setname("Basic output")
     .CHECK_OUTPUT(a, "2[km]")
@@ -51,14 +52,16 @@ int main() {
     .CHECK_THROWS(b+d)
 
     .setname("Basic input")
+
     .CHECK_OK(istringstream("700[kg]") >> a)
     .CHECK_OUTPUT((a += PhysicalNumber(1, Unit::TON)), "1700[kg]")
 
     // YOUR TESTS - INSERT AS MANY AS YOU WANT
-.CHECK_OUTPUT(e, "20[cm]")
+
+    .CHECK_OUTPUT(e, "20[cm]")
     .CHECK_OUTPUT(f, "45[sec]")
     .CHECK_OUTPUT(g, "15[g]")
-    .CHECK_OUTPUT(h, "20[km]")
+    .CHECK_OUTPUT(h, "20[kg]")
     .CHECK_OUTPUT(i, "10[ton]")
     .CHECK_OK(istringstream("2[km]") >> a) // changing back. a = 2[km]
     .CHECK_OUTPUT(a, "2[km]")
@@ -69,42 +72,37 @@ int main() {
     .CHECK_OUTPUT(b, "2300[m]")
     .CHECK_OUTPUT((b+=e), "2300.2[m]") ///////// b = 2300.2[m]
     .CHECK_OUTPUT(-c, "-2[hour]") // put const on physical number so that plus c wont turn into minus c or put Math.abs
-    .CHECK_OUTPUT(+c, "2[hour]") // positive
-    .CHECK_OUTPUT(c-d, "1.5[hour]") // need to check negativity with all units not only hours (perhaps a helping function)
-    .CHECK_OUTPUT((a-=e), "1.9998[m]")
+    .CHECK_OUTPUT(+c, "2[hour]")// positive
+    .CHECK_OUTPUT(c-d, "1.5[hour]")// need to check negativity with all units not only hours (perhaps a helping function)
+    .CHECK_OUTPUT((a-=e), "1.9998[km]")
     .CHECK_OUTPUT((b-=e), "2300[m]") // b shoud be now 2300[m]
-    .CHECK_OUTPUT((f>c), "false") // false because f is smaller than c
-    .CHECK_OUTPUT((f>d), "false") // same
-    .CHECK_OUTPUT((f>f), "false")
-    .CHECK_OUTPUT((f>=f), "true")
-    .CHECK_OUTPUT((g>=g), "true")
-    .CHECK_OUTPUT((g>=h), "false")
-    .CHECK_OUTPUT((g>=i), "false")
-    .CHECK_OUTPUT((h==h), "true")
-    .CHECK_OUTPUT((h==g), "false")
-    .CHECK_OUTPUT((h==i), "false")
+    .CHECK_OUTPUT((f>c), "0") // false because f is smaller than c
+    .CHECK_OUTPUT((f>d), "0") // same
+    .CHECK_OUTPUT((f>f), "0")
+    .CHECK_OUTPUT((f>=f), "1")
+    .CHECK_OUTPUT((g>=g), "1")
+    .CHECK_OUTPUT((g>=h), "0")
+    .CHECK_OUTPUT((g>=i), "0")
+    .CHECK_OUTPUT((h==h), "1")
+    .CHECK_OUTPUT((h==g), "0")
+    .CHECK_OUTPUT((h==i), "0")
     .CHECK_OK(istringstream("20000[g]") >> g)
-    .CHECK_OUTPUT(g, "20000[g]") 
-    .CHECK_OUTPUT((h==g), "true") // check that even when [g] and [kg] are different units but with equal input (needs to be true and not false due to defferent units!!)
-    .CHECK_OK(istringstream("0.0220462262[ton]") >> i)
-    .CHECK_OUTPUT(i, "0.0220462262[ton]")
-    .CHECK_OUTPUT((h==i), "true") // check that even when [g] and [kg] are different units but with equal input (needs to be true and not false due to defferent units!!)
-    .CHECK_OUTPUT((h!=h), "false")
-    .CHECK_OUTPUT((h!=g), "true")
-    .CHECK_OUTPUT((h!=i), "true")
-    .CHECK_OUTPUT((f<c), "true") // false because f is bigger than c
-    .CHECK_OUTPUT((f<d), "true") // same
-    .CHECK_OUTPUT((f<f), "false")
-    .CHECK_OUTPUT((g<=g), "true")
-    .CHECK_OUTPUT((g<=h), "true")
-    .CHECK_OUTPUT((g<=i), "true")
-    .CHECK_OK((a++)) // still 2
-    .CHECK_OUTPUT(a, "3[km]") // now is 3
-    .CHECK_OK((a--)) // still 3
-    .CHECK_OUTPUT(a, "2[km]") // now 2
-
-
-
+    .CHECK_OUTPUT(g, "20000[g]") // g is 20000 gram
+    .CHECK_OK(istringstream("0.0220462[ton]") >> i)
+    .CHECK_OUTPUT(i, "0.0220462[ton]")
+    .CHECK_OUTPUT((h!=h), "0")
+    .CHECK_OUTPUT((h!=g), "0")
+    .CHECK_OUTPUT((h!=i), "1")
+    .CHECK_OUTPUT((f<c), "1") // false because f is bigger than c
+    .CHECK_OUTPUT((f<d), "1") // same
+    .CHECK_OUTPUT((f<f), "0")
+    .CHECK_OUTPUT((g<=g), "1")
+    .CHECK_OUTPUT((g<=h), "1")
+    
+    .CHECK_OK((a++)) // still 1.9998
+    .CHECK_OUTPUT(a, "2.9998[km]") // now is 2.9998
+    .CHECK_OK((a--)) // still 2.9998
+    .CHECK_OUTPUT(a, "1.9998[km]") // now is 1.9998
 
 //////////////////////////////////////////////
 
@@ -124,17 +122,12 @@ int main() {
     .CHECK_THROWS(d-g)
     .CHECK_THROWS(d-h)
     .CHECK_THROWS(d-i)
-    .CHECK_THROWS(d-c)
-    .CHECK_THROWS(e-a)
-    .CHECK_THROWS(e-b)
     .CHECK_THROWS(e-c)
     .CHECK_THROWS(e-d)
     .CHECK_THROWS(e-f)
     .CHECK_THROWS(e-g)
     .CHECK_THROWS(e-h)
     .CHECK_THROWS(e-i)
-    .CHECK_THROWS(e-=a) // throws because e<0
-    .CHECK_THROWS(e-=b) // same
     .CHECK_THROWS(e-=c) // throws because of units
     .CHECK_THROWS(e-=d)
     .CHECK_THROWS(e-=f)
